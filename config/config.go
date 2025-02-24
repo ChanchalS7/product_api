@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +23,7 @@ func LoadEnv() {
 	JWTSecret = os.Getenv("JWT_SECRET")
 }
 func ConnectDB() *mongo.Client {
-	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI")).SetMaxPoolSize(100).SetMinPoolSize(5).SetMaxConnIdleTime(30 * time.Minute)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Fatal("Failed to connect to MongoDB:", err)
