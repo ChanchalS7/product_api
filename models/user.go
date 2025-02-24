@@ -1,3 +1,16 @@
+package models
+
+import (
+	"context"
+	"log"
+	"time"
+
+	"github.com/ChanchalS7/product_api/config"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
+)
+
 type User struct {
 	ID       primitive.ObjectID `bson:"_id",omitempty`
 	Email    string             `bson:"email"`

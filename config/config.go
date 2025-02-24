@@ -4,42 +4,49 @@ import (
 	"context"
 	"log"
 	"os"
-	"time"
 
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/x/mongo/driver/mongocrypt/options"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+var (
+	DB        *mongo.Database
+	JWTSecret string
 )
 
 func LoadEnv() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	JWTSecret = os.Getenv("JWT_SECRET")
 }
 func ConnectDB() *mongo.Client {
-	client, err := mongo.NewClient(options.Client(), ApplyURI(os.Getenv("MONGO_URI")))
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
+	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to connect to MongoDB:", err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// Ping the database to verify the connection
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Fatal("Failed to ping MongoDB:", err)
+	}
 
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println("Successfully connected to MongoDB")
 	return client
 
 }
 
-var DB *mongo.Database = GetDB()
+// var DB *mongo.Database = GetDB()
 
-func GetDB() *mongo.Database {
+// func GetDB() *mongo.Database {
+// 	client := ConnectDB()
+// 	return client.Database(os.Getenv("DB_NAME"))
+// }
+
+func InitDB() {
 	client := ConnectDB()
-	return client.Database(os.Getenv("DB_NAME"))
+	DB = client.Database(os.Getenv("DB_NAME"))
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/ChanchalS7/product_api/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/api/content/v2"
 )
 
 type Product struct {
@@ -36,7 +35,7 @@ func GetProduct(id string) (*Product, error) {
 		return nil, err
 	}
 	var product Product
-	err = config.DB.Collection("products").FindOne(ctx, bson.M{"_id", objID}).Decode(&product)
+	err = config.DB.Collection("products").FindOne(ctx, bson.M{"_id": objID}).Decode(&product)
 	return &product, err
 }
 
@@ -70,8 +69,8 @@ func UpdateProduct(id string, updateData bson.M) error {
 	}
 	_, err = config.DB.Collection("products").UpdateOne(
 		ctx,
-		bson.M{"_id", objID},
-		bson.M{"$set", updateData},
+		bson.M{"_id": objID},
+		bson.M{"$set": updateData},
 	)
 	return err
 }
@@ -84,6 +83,6 @@ func DeleteProduct(id string) error {
 	if err != nil {
 		return err
 	}
-	_, err = config.DB.Collection("products").DeleteOne(ctx, bson.M{"_id", objID})
+	_, err = config.DB.Collection("products").DeleteOne(ctx, bson.M{"_id": objID})
 	return err
 }
