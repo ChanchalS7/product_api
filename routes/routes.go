@@ -28,3 +28,7 @@ func RegisterProductRoutes(router *mux.Router) {
 	productRouter.HandleFunc("/{id}", controllers.DeleteProduct).Methods("DELETE")
 
 }
+
+func RegisterHealthRoutes(router *mux.Router) {
+	router.HandleFunc("/health", controllers.HealthCheck).Methods("GET")
+}
