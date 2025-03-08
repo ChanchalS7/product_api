@@ -7,6 +7,9 @@ import (
 )
 
 func RegisterAuthRoutes(router *mux.Router) {
+	authRouter := router.PathPrefix("/auth").Subrouter()
+	authRouter.Use(middleware.RateLimit)
+
 	router.HandleFunc("/register", controllers.Register).Methods("POST")
 	router.HandleFunc("/login", controllers.Login).Methods("POST")
 	router.HandleFunc("/logout", controllers.Logout).Methods("POST")

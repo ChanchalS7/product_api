@@ -17,7 +17,7 @@ func main() {
 	router := mux.NewRouter()
 	//middleware
 	router.Use(middleware.Logging)
-
+	router.Use(middleware.RateLimit)
 	//Routes
 	routes.RegisterAuthRoutes(router)
 	routes.RegisterProductRoutes(router)
